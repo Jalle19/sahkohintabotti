@@ -1,0 +1,15 @@
+{
+  "name": "sahkohintabotti",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/sahkohintabotti.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sam Stenvall <neggelandia@gmail.com>",
+  "license": "GPL-2.0-only",
+  "dependencies": {
+    "@slack/web-api": "^7.2.0",
+    "yargs": "^17.7.2"
+  }
+}
