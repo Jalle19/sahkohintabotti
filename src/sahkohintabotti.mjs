@@ -2,6 +2,7 @@ import { writeFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import yargs from 'yargs'
 import { WebClient } from '@slack/web-api'
+import {getRandomComment} from './comments.mjs'
 
 const argv = yargs(process.argv.slice(2))
   .usage('node $0 [options]')
@@ -54,7 +55,7 @@ const argv = yargs(process.argv.slice(2))
     channel_id: channelId,
     file: pngFilePath,
     filename: `${Date.now()}-${argv.ttiPage}.png`,
-    initial_comment: 'Markkina on puhunut!'
+    initial_comment: getRandomComment(),
   })
 
   console.dir(uploadResult.files[0].files)
