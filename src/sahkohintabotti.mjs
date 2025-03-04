@@ -36,6 +36,7 @@ const argv = yargs(process.argv.slice(2))
 
   // Replace some strings
   body = body.replace('YLE TEKSTI-TV', 'NITOR SLACK')
+    .replace('YLE TEKSTI-Tv', 'NITOR SLACK')
     .replace('Nord Pool', 'Nitor')
     .replace('P|rssis{hk|', 'S{hk|asiat')
 
