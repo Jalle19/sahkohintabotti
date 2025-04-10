@@ -1,8 +1,8 @@
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, rmSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import yargs from 'yargs'
 import { WebClient } from '@slack/web-api'
-import {getRandomComment} from './comments.mjs'
+import { getRandomComment } from './comments.mjs'
 import * as fs from 'node:fs'
 import { Readable, finished } from 'stream'
 
@@ -26,7 +26,16 @@ const argv = yargs(process.argv.slice(2))
     },
   }).argv
 
+// Construct paths to the TTI and PNG files
+const ttiPath = `${argv.outputPath}/P${argv.ttiPage}.tti`
+const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
+
 ;(async () => {
+  // Remove any leftovers from the previous run
+  console.log('Cleaning up potential leftovers from previous run')
+  rmSync(ttiPath, { force: true })
+  rmSync(pngFilePath, { force: true })
+
   // Acquire the TTI file
   const ttiUrl = `${argv.ttiBaseUrl}/P${argv.ttiPage}.tti`
   console.log(`Downloading ${ttiUrl}`)
@@ -41,17 +50,25 @@ const argv = yargs(process.argv.slice(2))
     .replace('P|rssis{hk|', 'S{hk|asiat')
 
   // Save to disk
-  const ttiPath = `${argv.outputPath}/P${argv.ttiPage}.tti`
   console.log(`Saving as ${ttiPath}`)
   writeFileSync(ttiPath, body)
 
-  // Call TTI2IMG
-  execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiPath, '-o', argv.outputPath])
-  const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
-  console.log(`Output file is ${pngFilePath}`)
+  // Use the fallback if we got the wrong page
+  let useFallback = false
+  if (!originalBody.includes('Nord Pool')) {
+    useFallback = true
+  }
+
+  // Call TTI2IMG. Use the fallback mechanism if the command fails.
+  try {
+    execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiPath, '-o', argv.outputPath])
+    console.log(`Output file is ${pngFilePath}`)
+  } catch (e) {
+    useFallback = true
+  }
 
   // Fall back to Yle image if parsing failed
-  if (!originalBody.includes("Nord Pool")) {
+  if (useFallback) {
     const appId = process.env.YLE_APP_ID
     const appKey = process.env.YLE_APP_KEY
 
@@ -59,7 +76,9 @@ const argv = yargs(process.argv.slice(2))
     const readStream = Readable.fromWeb(yleResponse.body)
     const stream = fs.createWriteStream(pngFilePath)
 
-    await readStream.pipe(stream)
+    readStream.pipe(stream)
+    await new Promise(resolve => readStream.on('finish', resolve))
+
     console.log(`Fell back to YLE image`)
   }
 
