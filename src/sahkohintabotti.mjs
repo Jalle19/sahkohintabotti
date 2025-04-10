@@ -76,7 +76,9 @@ const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
     const readStream = Readable.fromWeb(yleResponse.body)
     const stream = fs.createWriteStream(pngFilePath)
 
-    await readStream.pipe(stream)
+    readStream.pipe(stream)
+    await new Promise(resolve => readStream.on('finish', resolve))
+
     console.log(`Fell back to YLE image`)
   }
 
