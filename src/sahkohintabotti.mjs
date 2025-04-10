@@ -53,12 +53,22 @@ const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
   console.log(`Saving as ${ttiPath}`)
   writeFileSync(ttiPath, body)
 
-  // Call TTI2IMG
-  execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiPath, '-o', argv.outputPath])
-  console.log(`Output file is ${pngFilePath}`)
+  // Use the fallback if we got the wrong page
+  let useFallback = false
+  if (!originalBody.includes('Nord Pool')) {
+    useFallback = true
+  }
+
+  // Call TTI2IMG. Use the fallback mechanism if the command fails.
+  try {
+    execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiPath, '-o', argv.outputPath])
+    console.log(`Output file is ${pngFilePath}`)
+  } catch (e) {
+    useFallback = true
+  }
 
   // Fall back to Yle image if parsing failed
-  if (!originalBody.includes('Nord Pool')) {
+  if (useFallback) {
     const appId = process.env.YLE_APP_ID
     const appKey = process.env.YLE_APP_KEY
 
