@@ -58,7 +58,7 @@ const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
   console.log(`Output file is ${pngFilePath}`)
 
   // Fall back to Yle image if parsing failed
-  if (!originalBody.includes("Nord Pool")) {
+  if (!originalBody.includes('Nord Pool')) {
     const appId = process.env.YLE_APP_ID
     const appKey = process.env.YLE_APP_KEY
 
