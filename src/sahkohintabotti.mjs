@@ -14,7 +14,7 @@ const argv = yargs(process.argv.slice(2))
     },
     'ttiPage': {
       description: 'The teletext page number to use',
-      default: 189,
+      default: 188,
       alias: 'p',
     },
     'outputPath': {
