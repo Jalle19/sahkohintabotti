@@ -69,7 +69,7 @@ const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
   if (useFallback) {
     const appId = process.env.YLE_APP_ID
     const appKey = process.env.YLE_APP_KEY
-    const yleUrl = `https://external.api.yle.fi/v1/teletext/images/189/1.png?app_id=${appId}&app_key=${appKey}`
+    const yleUrl = `https://external.api.yle.fi/v1/teletext/images/${argv.ttiPage}/1.png?app_id=${appId}&app_key=${appKey}`
 
     // No amount of refactoring to get fetch() and createWriteStream etc. to work has ever succeeded so I've given
     // up and resorted to using tried and tested tools
