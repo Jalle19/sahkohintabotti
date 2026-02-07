@@ -5,6 +5,8 @@ const Comments = [
     'Se nyt vaan on tyhmää maksaa liikaa!',
     'Pörssisähkö - todennäköisesti aina halvempi',
     'Have you heard about the miracle of ~Elisa Saunalahti~ pörssisähkö prices?',
+    'Live by the pörssi, die by the pörssi',
+    'Alussa oli vain suo, kuokka ja sähköpörssi',
 ]
 
 export const getRandomComment = () => {
