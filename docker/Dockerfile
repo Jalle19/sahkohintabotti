@@ -13,3 +13,5 @@ RUN wget https://github.com/orryverducci/TtxFromTS/releases/download/v2.0/linux-
 
 RUN wget https://github.com/morski/TTI2IMG/releases/download/1.0.1/TTI2IMG -O /usr/local/bin/TTI2IMG && \
     chmod +x /usr/local/bin/TTI2IMG
+
+COPY docker/grab-mpegts.sh /scripts/grab-mpegts.sh
