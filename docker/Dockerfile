@@ -3,7 +3,7 @@ FROM debian:trixie
 WORKDIR /tmp
 
 RUN apt-get update && \
-    apt-get -y install wget unzip && \
+    apt-get -y install wget unzip libgssapi-krb5-2 && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget https://github.com/orryverducci/TtxFromTS/releases/download/v2.0/linux-x64.zip && \
