@@ -1,4 +1,4 @@
-FROM debian:trixie as ttxfromts-build
+FROM debian:trixie AS ttxfromts-build
 
 WORKDIR /tmp
 
@@ -18,7 +18,7 @@ RUN git clone --depth 1 https://github.com/orryverducci/TtxFromTS.git && \
     git apply ../dotnet-10.patch && \
     dotnet publish --runtime linux-x64 --configuration Release
 
-FROM debian:trixie AS run
+FROM node:22-trixie-slim AS run
 
 WORKDIR /tmp
 
@@ -35,3 +35,10 @@ RUN wget https://github.com/morski/TTI2IMG/releases/download/1.0.1/TTI2IMG -O /u
 
 COPY docker/grab-mpegts.sh /scripts/grab-mpegts.sh
 COPY docker/create-ttx.sh /scripts/create-ttx.sh
+
+WORKDIR /app
+
+COPY src/ /app/
+COPY package.json package-lock.json /app/
+
+RUN npm install --omit=dev

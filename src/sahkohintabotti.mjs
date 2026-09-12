@@ -1,4 +1,4 @@
-import { writeFileSync, rmSync } from 'node:fs'
+import {writeFileSync, rmSync, readFileSync} from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import yargs from 'yargs'
 import { WebClient } from '@slack/web-api'
@@ -7,8 +7,8 @@ import { getRandomComment } from './comments.mjs'
 const argv = yargs(process.argv.slice(2))
   .usage('node $0 [options]')
   .options({
-    'ttiBaseUrl': {
-      description: 'The URL to a location containing .tti files',
+    'ttiDirectory': {
+      description: 'The path to a location containing .tti files',
       demand: true,
       alias: 't',
     },
@@ -25,44 +25,39 @@ const argv = yargs(process.argv.slice(2))
   }).argv
 
 // Construct paths to the TTI and PNG files
-const ttiPath = `${argv.outputPath}/P${argv.ttiPage}.tti`
+const ttiInputPath = `${argv.ttiDirectory}/P${argv.ttiPage}.tti`
+const ttiOutputPath = `${argv.outputPath}/P${argv.ttiPage}.tti`
 const pngFilePath = `${argv.outputPath}/${argv.ttiPage}-0.png`
 
 ;(async () => {
   // Remove any leftovers from the previous run
   console.log('Cleaning up potential leftovers from previous run')
-  rmSync(ttiPath, { force: true })
+  rmSync(ttiOutputPath, { force: true })
   rmSync(pngFilePath, { force: true })
 
-  // Acquire the TTI file
-  const ttiUrl = `${argv.ttiBaseUrl}/P${argv.ttiPage}.tti`
-  console.log(`Downloading ${ttiUrl}`)
-  const response = await fetch(ttiUrl)
-  let body = await response.text()
-  const originalBody = body
+  let body = readFileSync(ttiInputPath).toString('latin1')
 
-  // Replace some strings
-  body = body.replace('YLE TEKSTI-TV', 'NITOR SLACK')
-    .replace('YLE TEKSTI-Tv', 'NITOR SLACK')
-    .replace('Nord Pool', 'Nitor')
-    .replace('P|rssis{hk|', 'S{hk|asiat')
+  // Fall back to YLE if we got the wrong page
+  let useFallback = !body.includes("Nord Pool")
 
-  // Save to disk
-  console.log(`Saving as ${ttiPath}`)
-  writeFileSync(ttiPath, body)
+  if (!useFallback) {
+    // Replace some strings
+    body = body.replace('YLE TEKSTI-TV', 'NITOR SLACK')
+        .replace('YLE TEKSTI-Tv', 'NITOR SLACK')
+        .replace('Nord Pool', 'Nitor')
+        .replace('P|rssis{hk|', 'S{hk|asiat')
 
-  // Use the fallback if we got the wrong page
-  let useFallback = false
-  if (!originalBody.includes('Nord Pool')) {
-    useFallback = true
-  }
+    // Save to disk
+    console.log(`Saving as ${ttiOutputPath}`)
+    writeFileSync(ttiOutputPath, body)
 
-  // Call TTI2IMG. Use the fallback mechanism if the command fails.
-  try {
-    execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiPath, '-o', argv.outputPath])
-    console.log(`Output file is ${pngFilePath}`)
-  } catch (e) {
-    useFallback = true
+    // Call TTI2IMG. Use the fallback mechanism if the command fails.
+    try {
+      execFileSync('/usr/local/bin/TTI2IMG', ['-i', ttiOutputPath, '-o', argv.outputPath])
+      console.log(`Output file is ${pngFilePath}`)
+    } catch (e) {
+      useFallback = true
+    }
   }
 
   // Fall back to Yle image if parsing failed
