@@ -1,4 +1,4 @@
-FROM debian:trixie as ttxfromts-build
+FROM debian:trixie AS ttxfromts-build
 
 WORKDIR /tmp
 
