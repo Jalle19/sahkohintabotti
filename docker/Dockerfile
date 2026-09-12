@@ -15,3 +15,4 @@ RUN wget https://github.com/morski/TTI2IMG/releases/download/1.0.1/TTI2IMG -O /u
     chmod +x /usr/local/bin/TTI2IMG
 
 COPY docker/grab-mpegts.sh /scripts/grab-mpegts.sh
+COPY docker/create-ttx.sh /scripts/create-ttx.sh
