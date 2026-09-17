@@ -1,12 +1,14 @@
 const Comments = [
-    'Markkina on puhunut!',
-    'Mistä näitä senttejä oikein tulee?',
-    'Hintahan on aina mielessä',
-    'Se nyt vaan on tyhmää maksaa liikaa!',
-    'Pörssisähkö - todennäköisesti aina halvempi',
-    'Have you heard about the miracle of ~Elisa Saunalahti~ pörssisähkö prices?',
-    'Live by the pörssi, die by the pörssi',
-    'Alussa oli vain suo, kuokka – ja sähköpörssi',
+    // 'Markkina on puhunut!',
+    // 'Mistä näitä senttejä oikein tulee?',
+    // 'Hintahan on aina mielessä',
+    // 'Se nyt vaan on tyhmää maksaa liikaa!',
+    // 'Pörssisähkö - todennäköisesti aina halvempi',
+    // 'Have you heard about the miracle of ~Elisa Saunalahti~ pörssisähkö prices?',
+    // 'Live by the pörssi, die by the pörssi',
+    // 'Alussa oli vain suo, kuokka – ja sähköpörssi',
+    // "Pörssisähkö - because you're worth it",
+    "Choose the pörssi and you will join me\nChoose the kiinteä, and you join your mother in death\nYou don't understand my words, but you must choose\nSo, come boy, choose life or death"
 ]
 
 export const getRandomComment = () => {
